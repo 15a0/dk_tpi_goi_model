@@ -1,0 +1,128 @@
+Date,Source,Team,Player,Sentiment
+2025-10-09,Perplexity,Colorado Avalanche,Alexandar Georgiev,2
+2025-10-09,Perplexity,Carolina Hurricanes,Alexander Nikishin,0
+2025-10-09,Perplexity,Carolina Hurricanes,Andrei Svechnikov,1
+2025-10-09,Grok,Carolina Hurricanes,Andrei Svechnikov,2
+2025-10-09,Gemini,Carolina Hurricanes,Andrei Svechnikov,1
+2025-10-09,Perplexity,New Jersey Devils,Arseny Gritsyuk,0
+2025-10-09,Perplexity,Colorado Avalanche,Artturi Lehkonen,1
+2025-10-09,Grok,Colorado Avalanche,Artturi Lehkonen,2
+2025-10-09,Gemini,Colorado Avalanche,Artturi Lehkonen,2
+2025-10-09,Gemini,Utah Mammoths,Barrett Hayton,-1
+2025-10-09,Perplexity,New Jersey Devils,Brenden Dillon,0
+2025-10-09,Gemini,Colorado Avalanche,Brent Burns,0
+2025-10-09,Gemini,New Jersey Devils,Brett Pesce,0
+2025-10-09,Gemini,Colorado Avalanche,Brock Nelson,1
+2025-10-09,Grok,Colorado Avalanche,Brock Nelson,1
+2025-10-09,Perplexity,Colorado Avalanche,Cale Makar,3
+2025-10-09,Gemini,Colorado Avalanche,Cale Makar,3
+2025-10-09,Grok,Colorado Avalanche,Cale Makar,3
+2025-10-09,Perplexity,Utah Mammoths,Clayton Keller,3
+2025-10-09,Gemini,Utah Mammoths,Clayton Keller,2
+2025-10-09,Grok,Utah Mammoths,Clayton Keller,3
+2025-10-09,Perplexity,New Jersey Devils,Cody Glass,0
+2025-10-09,Perplexity,New Jersey Devils,Connor Brown,0
+2025-10-09,Perplexity,Utah Mammoths,Danil But,1
+2025-10-09,Grok,New Jersey Devils,Dawson Mercer,1
+2025-10-09,Perplexity,New Jersey Devils,Dawson Mercer,1
+2025-10-09,Gemini,New Jersey Devils,Dawson Mercer,0
+2025-10-09,Perplexity,Colorado Avalanche,Devon Toews,2
+2025-10-09,Grok,Colorado Avalanche,Devon Toews,2
+2025-10-09,Gemini,Colorado Avalanche,Devon Toews,1
+2025-10-09,Gemini,New Jersey Devils,Dougie Hamilton,1
+2025-10-09,Grok,New Jersey Devils,Dougie Hamilton,2
+2025-10-09,Perplexity,New Jersey Devils,Dougie Hamilton,2
+2025-10-09,Grok,Utah Mammoths,Dylan Guenther,2
+2025-10-09,Gemini,Utah Mammoths,Dylan Guenther,0
+2025-10-09,Perplexity,Carolina Hurricanes,Eric Robinson,0
+2025-10-09,Gemini,New Jersey Devils,Evgenii Dadonov,0
+2025-10-09,Gemini,Carolina Hurricanes,Frederik Andersen,0
+2025-10-09,Grok,Carolina Hurricanes,Frederik Andersen,2
+2025-10-09,Perplexity,Carolina Hurricanes,Frederik Andersen,2
+2025-10-09,Perplexity,Colorado Avalanche,Gabriel Landeskog,2
+2025-10-09,Grok,Colorado Avalanche,Gabriel Landeskog,2
+2025-10-09,Gemini,Colorado Avalanche,Gabriel Landeskog,0
+2025-10-09,Gemini,Utah Mammoths,JJ Peterka,0
+2025-10-09,Grok,Utah Mammoths,JJ Peterka,2
+2025-10-09,Gemini,Carolina Hurricanes,Jaccob Slavin,1
+2025-10-09,Perplexity,Carolina Hurricanes,Jaccob Slavin,1
+2025-10-09,Grok,Carolina Hurricanes,Jaccob Slavin,1
+2025-10-09,Grok,New Jersey Devils,Jack Hughes,3
+2025-10-09,Gemini,New Jersey Devils,Jack Hughes,3
+2025-10-09,Perplexity,New Jersey Devils,Jack Hughes,3
+2025-10-09,Perplexity,Utah Mammoths,Jack McBain,2
+2025-10-09,Gemini,Utah Mammoths,Jack McBain,-1
+2025-10-09,Perplexity,Carolina Hurricanes,Jackson Blake,0
+2025-10-09,Grok,New Jersey Devils,Jacob Markstrom,0
+2025-10-09,Gemini,New Jersey Devils,Jacob Markstrom,1
+2025-10-09,Perplexity,New Jersey Devils,Jacob Markstrom,1
+2025-10-09,Perplexity,Carolina Hurricanes,Jalen Chatfield,0
+2025-10-09,Gemini,New Jersey Devils,Jesper Bratt,3
+2025-10-09,Perplexity,New Jersey Devils,Jesper Bratt,2
+2025-10-09,Grok,New Jersey Devils,Jesper Bratt,3
+2025-10-09,Perplexity,Carolina Hurricanes,Jesperi Kotkaniemi,0
+2025-10-09,Perplexity,Utah Mammoths,John Marino,0
+2025-10-09,Perplexity,New Jersey Devils,Jonas Siegenthaler,0
+2025-10-09,Gemini,New Jersey Devils,Jonas Siegenthaler,-1
+2025-10-09,Perplexity,Carolina Hurricanes,Jordan Martinook,0
+2025-10-09,Grok,Carolina Hurricanes,Jordan Staal,0
+2025-10-09,Perplexity,Carolina Hurricanes,Jordan Staal,1
+2025-10-09,Gemini,Carolina Hurricanes,Jordan Staal,0
+2025-10-09,Gemini,Carolina Hurricanes,K'Andre Miller,0
+2025-10-09,Perplexity,Carolina Hurricanes,K'Andre Miller,1
+2025-10-09,Perplexity,Utah Mammoths,Kailer Yamamoto,1
+2025-10-09,Grok,Utah Mammoths,Karel Vejmelka,0
+2025-10-09,Gemini,Utah Mammoths,Karel Vejmelka,0
+2025-10-09,Perplexity,Utah Mammoths,Lawson Crouse,2
+2025-10-09,Grok,Utah Mammoths,Lawson Crouse,1
+2025-10-09,Gemini,Utah Mammoths,Lawson Crouse,-2
+2025-10-09,Perplexity,Utah Mammoths,Logan Cooley,2
+2025-10-09,Gemini,Utah Mammoths,Logan Cooley,1
+2025-10-09,Grok,Utah Mammoths,Logan Cooley,2
+2025-10-09,Perplexity,Carolina Hurricanes,Logan Stankoven,1
+2025-10-09,Gemini,Carolina Hurricanes,Logan Stankoven,0
+2025-10-09,Perplexity,New Jersey Devils,Luke Glendening,0
+2025-10-09,Perplexity,New Jersey Devils,Luke Hughes,1
+2025-10-09,Gemini,New Jersey Devils,Luke Hughes,1
+2025-10-09,Gemini,Colorado Avalanche,Martin Necas,2
+2025-10-09,Grok,Colorado Avalanche,Martin Necas,3
+2025-10-09,Perplexity,Utah Mammoths,Matt Villalta,1
+2025-10-09,Grok,Utah Mammoths,Mikhail Sergachev,1
+2025-10-09,Perplexity,Colorado Avalanche,Mikko Rantanen,3
+2025-10-09,Grok,Colorado Avalanche,Nathan MacKinnon,3
+2025-10-09,Perplexity,Colorado Avalanche,Nathan MacKinnon,3
+2025-10-09,Gemini,Colorado Avalanche,Nathan MacKinnon,3
+2025-10-09,Gemini,Utah Mammoths,Nick Schmaltz,1
+2025-10-09,Grok,New Jersey Devils,Nico Hischier,3
+2025-10-09,Perplexity,New Jersey Devils,Nico Hischier,1
+2025-10-09,Gemini,New Jersey Devils,Nico Hischier,2
+2025-10-09,Gemini,Carolina Hurricanes,Nikolaj Ehlers,2
+2025-10-09,Perplexity,Carolina Hurricanes,Nikolaj Ehlers,2
+2025-10-09,Perplexity,Utah Mammoths,Olli Määttä,0
+2025-10-09,Perplexity,New Jersey Devils,Ondrej Palat,0
+2025-10-09,Gemini,New Jersey Devils,Ondrej Palat,0
+2025-10-09,Perplexity,New Jersey Devils,Paul Cotter,0
+2025-10-09,Gemini,Colorado Avalanche,Ross Colton,-1
+2025-10-09,Grok,Colorado Avalanche,Samuel Girard,1
+2025-10-09,Gemini,Colorado Avalanche,Samuel Girard,-1
+2025-10-09,Grok,Colorado Avalanche,Scott Wedgewood,1
+2025-10-09,Gemini,Colorado Avalanche,Scott Wedgewood,1
+2025-10-09,Gemini,Carolina Hurricanes,Sean Walker,-1
+2025-10-09,Perplexity,Carolina Hurricanes,Sean Walker,1
+2025-10-09,Grok,Carolina Hurricanes,Sebastian Aho,3
+2025-10-09,Gemini,Carolina Hurricanes,Sebastian Aho,3
+2025-10-09,Perplexity,Carolina Hurricanes,Sebastian Aho,3
+2025-10-09,Perplexity,Carolina Hurricanes,Seth Jarvis,2
+2025-10-09,Grok,Carolina Hurricanes,Seth Jarvis,3
+2025-10-09,Gemini,Carolina Hurricanes,Seth Jarvis,2
+2025-10-09,Gemini,Carolina Hurricanes,Shayne Gostisbehere,0
+2025-10-09,Perplexity,Carolina Hurricanes,Shayne Gostisbehere,0
+2025-10-09,Perplexity,New Jersey Devils,Simon Nemec,0
+2025-10-09,Gemini,Carolina Hurricanes,Taylor Hall,-1
+2025-10-09,Perplexity,Carolina Hurricanes,Taylor Hall,0
+2025-10-09,Gemini,New Jersey Devils,Timo Meier,1
+2025-10-09,Perplexity,New Jersey Devils,Timo Meier,1
+2025-10-09,Grok,New Jersey Devils,Timo Meier,3
+2025-10-09,Gemini,Colorado Avalanche,Valeri Nichushkin,0
+2025-10-09,Grok,Colorado Avalanche,Valeri Nichushkin,2
+2025-10-09,Perplexity,Carolina Hurricanes,William Carrier,0

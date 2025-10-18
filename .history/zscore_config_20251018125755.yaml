@@ -1,0 +1,31 @@
+# YAML config for zscore columns
+# Each entry: name (column), sort_order ('asc' or 'desc'), reverse_sign (true/false)
+zscore_stats:
+  - name: CF%
+    sort_order: desc
+    reverse_sign: false
+    weight: 1
+  - name: xGF
+    sort_order: desc
+    reverse_sign: false
+    weight: 1
+  - name: xGA
+    sort_order: asc
+    reverse_sign: true
+    weight: 1
+  - name: SCF%
+    sort_order: desc
+    reverse_sign: false
+    weight: 0.5
+  - name: HDF%
+    sort_order: desc
+    reverse_sign: false
+    weight: 0.5
+  - name: HDC%
+    sort_order: desc
+    reverse_sign: false
+    weight:
+  - name: HDCO%
+    sort_order: desc
+    reverse_sign: false
+    weight:
