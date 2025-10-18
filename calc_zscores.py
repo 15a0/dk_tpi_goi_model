@@ -78,6 +78,15 @@ for stat_cfg in ZSCORE_STATS:
         else:
             print("Please enter Y or Q.")
 
+
+
+### ADD NEW PENALTY DF HERE ####
+# 
+# 
+# 
+# 
+#             
+### DO NOT ALTER CODE BELOW THIS LINE
 # Combine all stat DataFrames
 combined_df = pd.concat(all_dfs, ignore_index=True)
 combined_df = combined_df.sort_values(by='zscore', ascending=False).reset_index(drop=True)
