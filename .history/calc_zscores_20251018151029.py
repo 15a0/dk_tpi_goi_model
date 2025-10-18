@@ -157,9 +157,9 @@ for stat_cfg in ZSCORE_STATS:
     ascending = True if sort_order == 'asc' else False
     df_stat = df_stat.sort_values(by='value', ascending=ascending).reset_index(drop=True)
     df_stat['zStat_rank'] = range(1, len(df_stat) + 1)
-    # print(f"\n===== {stat} (Penalties) =====")
-    # print(df_stat)
-    all_dfs.append(df_stat)
+    print(f"\n===== {stat} (Penalties) =====")
+    print(df_stat)
+    # Optionally: append to all_dfs if you want to include these in combined_df
 
 
 
@@ -213,7 +213,5 @@ ztotal_df = pd.DataFrame(ztotal_rows)
 ztotal_df = ztotal_df.sort_values(by='zTotal', ascending=False).reset_index(drop=True)
 print("\n===== Team zTotal Scores =====")
 print(ztotal_df)
-ztotal_df.to_csv('team_total_zscores.csv', index=False)
-print("Team zTotal scores written to team_total_zscores.csv")
 
 

@@ -14,7 +14,6 @@ with open(os.path.join(os.path.dirname(__file__), 'zscore_config.yaml'), 'r') as
     zscore_cfg = yaml.safe_load(f)
 ZSCORE_STATS = zscore_cfg['zscore_stats']
 
-## ANALYTICS ##
 # Read Excel and check worksheet
 try:
     xl = pd.ExcelFile(XLS_PATH)
@@ -33,9 +32,7 @@ if headers[1] == '' and headers[0] == 'Rk' and headers[2] == 'S%':
     df.columns = headers
 
 # Only keep needed columns
-# Only keep columns that exist in the main Excel sheet (exclude penalty stats)
-main_stat_names = [stat_cfg['name'] for stat_cfg in ZSCORE_STATS if stat_cfg['name'] in df.columns]
-keep_cols = ['Team'] + main_stat_names
+keep_cols = ['Team'] + [stat_cfg['name'] for stat_cfg in ZSCORE_STATS]
 missing = [col for col in keep_cols if col not in df.columns]
 if missing:
     print(f"Missing columns: {missing}. Exiting.")
@@ -47,16 +44,12 @@ df = df[keep_cols].reset_index(drop=True)
 # Calculate z-scores for all columns at once and store in new columns
 for stat_cfg in ZSCORE_STATS:
     stat = stat_cfg['name']
-    if stat not in df.columns:
-        continue
     df[f'{stat}_zscore'] = zscore(df[stat], nan_policy='omit')
 
 # Interactive cycle for each stat
 all_dfs = []
 for stat_cfg in ZSCORE_STATS:
     stat = stat_cfg['name']
-    if stat not in df.columns:
-        continue
     z_col = f'{stat}_zscore'
     reverse_sign = stat_cfg.get('reverse_sign', False)
     sort_order = stat_cfg.get('sort_order', 'desc')
@@ -133,40 +126,15 @@ penalties_df = penalties_df[cols]
 print("\n===== Penalties DataFrame =====")
 print(penalties_df)
 
-### ADD penalty df logic here ###
+### ADD penatly df logic here ###
 
-# For each penalty stat in ZSCORE_STATS, if present in penalties_df, create and print a per-stat DataFrame
-for stat_cfg in ZSCORE_STATS:
-    stat = stat_cfg['name']
-    if stat not in penalties_df.columns:
-        continue
-    z_col = f'{stat}_zscore'
-    reverse_sign = stat_cfg.get('reverse_sign', False)
-    sort_order = stat_cfg.get('sort_order', 'desc')
-    # Calculate zscore for this stat
-    penalties_df[z_col] = zscore(penalties_df[stat], nan_policy='omit')
-    z = penalties_df[z_col]
-    if reverse_sign:
-        z = -z
-    df_stat = pd.DataFrame({
-        'team': penalties_df['Team'],
-        'stat': stat,
-        'value': penalties_df[stat],
-        'zscore': z
-    })
-    ascending = True if sort_order == 'asc' else False
-    df_stat = df_stat.sort_values(by='value', ascending=ascending).reset_index(drop=True)
-    df_stat['zStat_rank'] = range(1, len(df_stat) + 1)
-    # print(f"\n===== {stat} (Penalties) =====")
-    # print(df_stat)
-    all_dfs.append(df_stat)
+
+### DO NOT ALTER CODE BELOW THIS LINE
+
+sys.exit(0)
 
 
 
-#  sys.exit(0)
-
-
-#######################################################
 
 # Combine all stat DataFrames
 combined_df = pd.concat(all_dfs, ignore_index=True)
@@ -213,7 +181,5 @@ ztotal_df = pd.DataFrame(ztotal_rows)
 ztotal_df = ztotal_df.sort_values(by='zTotal', ascending=False).reset_index(drop=True)
 print("\n===== Team zTotal Scores =====")
 print(ztotal_df)
-ztotal_df.to_csv('team_total_zscores.csv', index=False)
-print("Team zTotal scores written to team_total_zscores.csv")
 
 
