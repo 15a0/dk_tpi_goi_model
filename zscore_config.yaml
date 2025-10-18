@@ -29,6 +29,18 @@ zscore_stats:
     sort_order: desc
     reverse_sign: false
     weight: 0.3
+  - name: Pen Drawn/60
+    sort_order: desc
+    reverse_sign: false
+    weight: 0.5
+  - name: Pen Taken/60
+    sort_order: asc
+    reverse_sign: false
+    weight: 0.5
+  - name: Net Pen/60
+    sort_order: desc
+    reverse_sign: false
+    weight: 0.5
 
 
 

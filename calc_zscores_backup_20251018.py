@@ -65,68 +65,27 @@ for stat_cfg in ZSCORE_STATS:
     ascending = True if sort_order == 'asc' else False
     df_stat = df_stat.sort_values(by='value', ascending=ascending).reset_index(drop=True)
     df_stat['zStat_rank'] = range(1, len(df_stat) + 1)
-    # print(f"\n===== {stat} =====")
-    # print(df_stat)
+    print(f"\n===== {stat} =====")
+    print(df_stat)
     all_dfs.append(df_stat)
-    # while True:
-    #     resp = input(f"Approve {stat}? (Y to continue, Q to quit): ").strip().lower()
-    #     if resp == 'y':
-    #         break
-    #     elif resp == 'q':
-    #         print("Exiting by user request.")
-    #         sys.exit(0)
-    #     else:
-    #         print("Please enter Y or Q.")
+    while True:
+        resp = input(f"Approve {stat}? (Y to continue, Q to quit): ").strip().lower()
+        if resp == 'y':
+            break
+        elif resp == 'q':
+            print("Exiting by user request.")
+            sys.exit(0)
+        else:
+            print("Please enter Y or Q.")
 
 
 
 ### ADD NEW PENALTY DF HERE ####
-import pandas as pd
-import yaml
-import os
-import sys
-
-# Read Penalties tab into penalties_df
-penalties_xlsx = os.path.join(os.path.dirname(__file__), 'Penalties_20251018.xlsx')
-penalties_tab = 'Penalties'
-try:
-    penalties_xl = pd.ExcelFile(penalties_xlsx)
-    if penalties_tab not in penalties_xl.sheet_names:
-        print(f"Tab '{penalties_tab}' not found in Penalties_20251018.xlsx. Exiting.")
-        sys.exit(1)
-    penalties_df = penalties_xl.parse(penalties_tab)
-except Exception as e:
-    print(f"Failed to read penalties Excel file: {e}")
-    sys.exit(1)
-
-# Load team mappings from YAML
-with open(os.path.join(os.path.dirname(__file__), 'zscore_config.yaml'), 'r') as f:
-    zscore_cfg = yaml.safe_load(f)
-team_mappings = zscore_cfg.get('team_mappings') or {}
-
-# Normalize and strip team names before mapping
-import unicodedata
-
-def normalize_team(s):
-    if pd.isnull(s):
-        return s
-    return unicodedata.normalize('NFC', str(s)).strip()
-
-# Normalize mapping keys as well
-norm_team_mappings = {normalize_team(k): v for k, v in team_mappings.items()}
-
-penalties_df['Team'] = penalties_df['Team'].apply(normalize_team)
-penalties_df['Team'] = penalties_df['Team'].replace(norm_team_mappings)
-
-# Reduce to four columns
-cols = ['Team', 'Pen Drawn/60', 'Pen Taken/60', 'Net Pen/60']
-penalties_df = penalties_df[cols]
-
-# Print and exit
-print("\n===== Penalties DataFrame =====")
-print(penalties_df)
-sys.exit(0)
-
+# 
+# 
+# 
+# 
+#             
 ### DO NOT ALTER CODE BELOW THIS LINE
 
 
@@ -175,5 +134,6 @@ ztotal_df = pd.DataFrame(ztotal_rows)
 ztotal_df = ztotal_df.sort_values(by='zTotal', ascending=False).reset_index(drop=True)
 print("\n===== Team zTotal Scores =====")
 print(ztotal_df)
+
 
 
