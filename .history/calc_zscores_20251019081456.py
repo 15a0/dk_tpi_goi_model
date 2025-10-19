@@ -136,8 +136,8 @@ cols = ['Team', 'Pen Drawn/60', 'Pen Taken/60', 'Net Pen/60']
 penalties_df = penalties_df[cols]
 
 # Print penalties DataFrame for reference (not used in final output)
-# print("\n===== Penalties DataFrame =====")
-# print(penalties_df)
+print("\n===== Penalties DataFrame =====")
+print(penalties_df)
 
 ### ADD penalty df logic here ###
 
@@ -173,49 +173,33 @@ for stat_cfg in ZSCORE_STATS:
 
 #######################################################
 
-# --- Load and process FOW% from FOW_20251018.xlsx ---
-fow_xlsx = os.path.join(os.path.dirname(__file__), 'FOW_20251018.xlsx')
-try:
-    fow_xl = pd.ExcelFile(fow_xlsx)
-    if len(fow_xl.sheet_names) != 1:
-        print(f"Expected exactly one tab in FOW_20251018.xlsx, found: {fow_xl.sheet_names}. Exiting.")
-        sys.exit(1)
-    fow_tab = fow_xl.sheet_names[0]
-    fow_df = fow_xl.parse(fow_tab)
-except Exception as e:
-    print(f"Failed to read FOW% Excel file: {e}")
-    sys.exit(1)
+# ADD FOW%  HERE
 
-# Load team mappings from YAML and normalize team names
-with open(os.path.join(os.path.dirname(__file__), 'zscore_config.yaml'), 'r') as f:
-    zscore_cfg = yaml.safe_load(f)
-team_mappings = zscore_cfg.get('team_mappings') or {}
-import unicodedata
-norm_team_mappings = {unicodedata.normalize('NFC', str(k)).strip(): v for k, v in team_mappings.items()}
-fow_df['Team'] = fow_df['Team'].apply(lambda s: unicodedata.normalize('NFC', str(s)).strip() if pd.notnull(s) else s)
-fow_df['Team'] = fow_df['Team'].replace(norm_team_mappings)
 
-# Reduce to only Team and FOW%
-fow_df = fow_df[['Team', 'FOW%']]
-# print("\n===== FOW% DataFrame =====")
-# print(fow_df)
 
-# Calculate zscore for FOW% and append to all_dfs
-from scipy.stats import zscore as _zscore
-fow_df['FOW%_zscore'] = _zscore(fow_df['FOW%'], nan_policy='omit')
-z = fow_df['FOW%_zscore']
-df_stat = pd.DataFrame({
-    'team': fow_df['Team'],
-    'stat': 'FOW%',
-    'value': fow_df['FOW%'],
-    'zscore': z
-})
-df_stat = df_stat.sort_values(by='value', ascending=False).reset_index(drop=True)
-df_stat['zStat_rank'] = range(1, len(df_stat) + 1)
-# print("\n===== FOW% (zscore) =====")
-# print(df_stat)
-all_dfs.append(df_stat)
-# sys.exit(0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #######################################################
 

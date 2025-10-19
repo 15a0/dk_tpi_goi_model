@@ -197,8 +197,8 @@ fow_df['Team'] = fow_df['Team'].replace(norm_team_mappings)
 
 # Reduce to only Team and FOW%
 fow_df = fow_df[['Team', 'FOW%']]
-# print("\n===== FOW% DataFrame =====")
-# print(fow_df)
+print("\n===== FOW% DataFrame =====")
+print(fow_df)
 
 # Calculate zscore for FOW% and append to all_dfs
 from scipy.stats import zscore as _zscore

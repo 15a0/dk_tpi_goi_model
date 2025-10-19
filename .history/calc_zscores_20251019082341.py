@@ -197,8 +197,8 @@ fow_df['Team'] = fow_df['Team'].replace(norm_team_mappings)
 
 # Reduce to only Team and FOW%
 fow_df = fow_df[['Team', 'FOW%']]
-# print("\n===== FOW% DataFrame =====")
-# print(fow_df)
+print("\n===== FOW% DataFrame =====")
+print(fow_df)
 
 # Calculate zscore for FOW% and append to all_dfs
 from scipy.stats import zscore as _zscore
@@ -212,16 +212,17 @@ df_stat = pd.DataFrame({
 })
 df_stat = df_stat.sort_values(by='value', ascending=False).reset_index(drop=True)
 df_stat['zStat_rank'] = range(1, len(df_stat) + 1)
-# print("\n===== FOW% (zscore) =====")
-# print(df_stat)
+print("\n===== FOW% (zscore) =====")
+print(df_stat)
 all_dfs.append(df_stat)
 # sys.exit(0)
 
 #######################################################
 
 # --- Combine all per-stat DataFrames (main and penalties) into one big DataFrame ---
-combined_df = pd.concat(all_dfs, ignore_index=True)
-combined_df = combined_df.sort_values(by='zscore', ascending=False).reset_index(drop=True)
+# combined_df = pd.concat(all_dfs, ignore_index=True)
+# combined_df = combined_df.sort_values(by='zscore', ascending=False).reset_index(drop=True)
+# combined_df['zOvlIdx'] = range(1, len(combined_df) + 1)
 combined_df['zOvlIdx'] = range(1, len(combined_df) + 1)
 
 print("\n===== Combined DataFrame (sorted by zscore DESC, with zOvlIdx) =====")
