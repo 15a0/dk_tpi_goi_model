@@ -1,0 +1,120 @@
+# Version 2.0 Configuration for Z-Score Calculation
+
+# Data provider configurations
+# The script will look for files named <YYYYMMDD>_<filename_template>
+# e.g., 20251019_Analytics.xlsx
+providers:
+  - name: "hockey-reference.com"
+    files:
+      - type: "main_stats"
+        url: "https://www.hockey-reference.com/leagues/NHL_2026.html"
+        c: "nhl_main_stats.xlsx"
+        tab_name: "Worksheet"
+        header_row: 0
+        stats:
+          - name: CF%
+            sort_order: desc
+            reverse_sign: false
+            weight: 1
+          - name: xGF
+            sort_order: desc
+            reverse_sign: false
+            weight: 1
+          - name: xGA
+            sort_order: asc
+            reverse_sign: true
+            weight: 1
+          - name: SCF%
+            sort_order: desc
+            reverse_sign: false
+            weight: 0.5
+          - name: HDF%
+            sort_order: desc
+            reverse_sign: false
+            weight: 0.5
+          - name: HDC%
+            sort_order: desc
+            reverse_sign: false
+            weight: 0.3
+          - name: HDCO%
+            sort_order: desc
+            reverse_sign: false
+            weight: 0.3
+      - type: "pp_pk"
+        url: "https://www.hockey-reference.com/leagues/NHL_2026.html"
+        filename_template: "nhl_pp_pk.xlsx"
+        tab_name: "Worksheet"
+        header_row: 0
+        stats:
+          - name: PP%
+            sort_order: desc
+            reverse_sign: false
+            weight: 0.5
+          - name: PK%
+            sort_order: desc
+            reverse_sign: false
+            weight: 0.5
+  - name: "nhl.com"
+    files:
+      - type: "penalties"
+        url: "https://www.nhl.com/stats/teams?report=penalties&reportType=game&dateFrom=2025-10-07&dateTo=2025-10-18&gameType=2&sort=penaltyMinutes&page=0&pageSize=50"
+        filename_template: "nhl_penalties.xlsx"
+        tab_name: "Worksheet"
+        header_row: 0
+        stats:
+          - name: Pen Drawn/60
+            sort_order: desc
+            reverse_sign: false
+            weight: 0.5
+          - name: Pen Taken/60
+            sort_order: asc
+            reverse_sign: true
+            weight: 0.5
+          - name: Net Pen/60
+            sort_order: desc
+            reverse_sign: false
+            weight: 0.5
+      - type: "fow"
+        url: "https://www.nhl.com/stats/teams?report=faceoffpercentages&reportType=game&dateFrom=2025-10-07&dateTo=2025-10-18&gameType=2&sort=faceoffWinPct&page=0&pageSize=50"
+        filename_template: "nhl_fow.xlsx"
+        tab_name: "Worksheet"
+        header_row: 0
+        stats:
+          - name: FOW%
+            sort_order: desc
+            reverse_sign: false
+            weight: 0.3
+
+canonical_teams:
+  - Colorado Avalanche
+  - Washington Capitals
+  - Carolina Hurricanes
+  - Vegas Golden Knights
+  - Detroit Red Wings
+  - Montreal Canadiens
+  - Nashville Predators
+  - Winnipeg Jets
+  - Vancouver Canucks
+  - Utah Mammoth
+  - Toronto Maple Leafs
+  - Seattle Kraken
+  - Pittsburgh Penguins
+  - New Jersey Devils
+  - Boston Bruins
+  - Chicago Blackhawks
+  - Florida Panthers
+  - Dallas Stars
+  - New York Rangers
+  - Edmonton Oilers
+  - Minnesota Wild
+  - Anaheim Ducks
+  - Ottawa Senators
+  - St. Louis Blues
+  - Tampa Bay Lightning
+  - Los Angeles Kings
+  - Philadelphia Flyers
+  - San Jose Sharks
+  - Calgary Flames
+  - Columbus Blue Jackets
+  - Buffalo Sabres
+  - New York Islanders

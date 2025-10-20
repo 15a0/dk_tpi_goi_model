@@ -4,7 +4,6 @@ import pandas as pd
 from scipy.stats import zscore
 import numpy as np
 import yaml
-from unidecode import unidecode as ud
 
 # ===============================
 # NHL Team Z-Score Calculation Pipeline
@@ -57,9 +56,6 @@ if missing:
     sys.exit(1)
 df = df[keep_cols].reset_index(drop=True)
 #
-
-# Define canonical team names from main DataFrame
-canonical_teams = set(df['Team'])
 
 
 # --- Calculate z-scores for each stat in the main DataFrame ---
@@ -158,13 +154,6 @@ for stat_cfg in ZSCORE_STATS:
     z = penalties_df[z_col]
     if reverse_sign:
         z = -z
-        # Clean and normalize Team names with unidecode
-    penalties_df['Team'] = penalties_df['Team'].apply(lambda s: ud(str(s)).strip() if pd.notnull(s) else s)
-    # Check for non-canonical teams
-    unknown_teams = set(penalties_df['Team']) - canonical_teams
-    if unknown_teams:
-        print(f"Unknown team names in Penalties_20251018.xlsx after cleaning: {unknown_teams}")
-        import sys; sys.exit(0)
     df_stat = pd.DataFrame({
         'team': penalties_df['Team'],
         'stat': stat,
@@ -196,18 +185,20 @@ try:
 except Exception as e:
     print(f"Failed to read FOW% Excel file: {e}")
     sys.exit(1)
-#
-# Clean and normalize Team names with unidecode
-fow_df['Team'] = fow_df['Team'].apply(lambda s: ud(str(s)).strip() if pd.notnull(s) else s)
+
+# Load team mappings from YAML and normalize team names
+with open(os.path.join(os.path.dirname(__file__), 'zscore_config.yaml'), 'r') as f:
+    zscore_cfg = yaml.safe_load(f)
+team_mappings = zscore_cfg.get('team_mappings') or {}
+import unicodedata
+norm_team_mappings = {unicodedata.normalize('NFC', str(k)).strip(): v for k, v in team_mappings.items()}
+fow_df['Team'] = fow_df['Team'].apply(lambda s: unicodedata.normalize('NFC', str(s)).strip() if pd.notnull(s) else s)
+fow_df['Team'] = fow_df['Team'].replace(norm_team_mappings)
 
 # Reduce to only Team and FOW%
 fow_df = fow_df[['Team', 'FOW%']]
-
-# Check for non-canonical teams
-unknown_teams = set(fow_df['Team']) - canonical_teams
-if unknown_teams:
-    print(f"Unknown team names in FOW_20251018.xlsx after cleaning: {unknown_teams}")
-    import sys; sys.exit(0)
+# print("\n===== FOW% DataFrame =====")
+# print(fow_df)
 
 # Calculate zscore for FOW% and append to all_dfs
 from scipy.stats import zscore as _zscore
@@ -223,85 +214,12 @@ df_stat = df_stat.sort_values(by='value', ascending=False).reset_index(drop=True
 df_stat['zStat_rank'] = range(1, len(df_stat) + 1)
 # print("\n===== FOW% (zscore) =====")
 # print(df_stat)
-print(f"Appending DataFrame for stat FOW%: unique teams: {df_stat['team'].unique()}")
 all_dfs.append(df_stat)
 # sys.exit(0)
 
 #######################################################
 
-# --- Load and process PP% and PK% from PP_20251018.xlsx ---
-pp_xlsx = os.path.join(os.path.dirname(__file__), 'PP_20251018.xlsx')
-try:
-    pp_xl = pd.ExcelFile(pp_xlsx)
-    if len(pp_xl.sheet_names) != 1:
-        print(f"Expected exactly one tab in PP_20251018.xlsx, found: {pp_xl.sheet_names}. Exiting.")
-        sys.exit(1)
-    pp_tab = pp_xl.sheet_names[0]
-    pp_df = pp_xl.parse(pp_tab, header=1)  # Data starts at row 2 (header=1)
-except Exception as e:
-    print(f"Failed to read PP% Excel file: {e}")
-    sys.exit(1)
 
-# Fix blank or misnamed team column (match main stats logic)
-headers = list(pp_df.columns)
-if len(headers) > 2 and headers[1] == '' and headers[0] == 'Rk' and headers[2] == 'S%':
-    headers[1] = 'Team'
-    pp_df.columns = headers
-elif 'Team' not in headers:
-    # Try to find a column that looks like team names and rename
-    for i, col in enumerate(headers):
-        if i > 0 and all(isinstance(x, str) and len(x) > 3 for x in pp_df[col].head(5)):
-            headers[i] = 'Team'
-            pp_df.columns = headers
-            break
-
-# Extract only Team, PP%, PK%
-pp_pk_cols = ['Team', 'PP%', 'PK%']
-missing = [col for col in pp_pk_cols if col not in pp_df.columns]
-if missing:
-    print(f"Missing columns in PP file: {missing}. Exiting.")
-    sys.exit(1)
-pp_df = pp_df[pp_pk_cols].reset_index(drop=True)
-
-# Exclude League Average row
-pp_df = pp_df[pp_df['Team'] != 'League Average'].reset_index(drop=True)
-
-# Clean and normalize Team names with unidecode for PP/PK
-pp_df['Team'] = pp_df['Team'].apply(lambda s: ud(str(s)).strip() if pd.notnull(s) else s)
-# Check for non-canonical teams
-unknown_teams = set(pp_df['Team']) - canonical_teams
-if unknown_teams:
-    print(f"Unknown team names in PP_20251018.xlsx after cleaning: {unknown_teams}")
-    import sys; sys.exit(0)
-
-# Calculate z-score for PP%
-from scipy.stats import zscore as _zscore
-pp_df['PP%_zscore'] = _zscore(pp_df['PP%'], nan_policy='omit')
-df_pp = pd.DataFrame({
-    'team': pp_df['Team'],
-    'stat': 'PP%',
-    'value': pp_df['PP%'],
-    'zscore': pp_df['PP%_zscore']
-})
-df_pp = df_pp.sort_values(by='value', ascending=False).reset_index(drop=True)
-df_pp['zStat_rank'] = range(1, len(df_pp) + 1)
-
-# Calculate z-score for PK%
-pp_df['PK%_zscore'] = _zscore(pp_df['PK%'], nan_policy='omit')
-df_pk = pd.DataFrame({
-    'team': pp_df['Team'],
-    'stat': 'PK%',
-    'value': pp_df['PK%'],
-    'zscore': pp_df['PK%_zscore']
-})
-df_pk = df_pk.sort_values(by='value', ascending=False).reset_index(drop=True)
-df_pk['zStat_rank'] = range(1, len(df_pk) + 1)
-
-print(f"Appending DataFrame for stat PP%: unique teams: {df_pp['team'].unique()}")
-all_dfs.append(df_pp)
-print(f"Appending DataFrame for stat PK%: unique teams: {df_pk['team'].unique()}")
-all_dfs.append(df_pk)
-# sys.exit(0)
 
 #######################################################
 
@@ -310,16 +228,10 @@ combined_df = pd.concat(all_dfs, ignore_index=True)
 combined_df = combined_df.sort_values(by='zscore', ascending=False).reset_index(drop=True)
 combined_df['zOvlIdx'] = range(1, len(combined_df) + 1)
 
-print(f"\nUnique team names in combined_df before writing zOverall.csv: {combined_df['team'].unique()}")
 print("\n===== Combined DataFrame (sorted by zscore DESC, with zOvlIdx) =====")
 print(combined_df)
-try:
-    combined_df.to_csv('zOverall.csv', index=False)
-    print("Combined DataFrame written to zOverall.csv")
-except PermissionError:
-    fallback = 'zOverall_out.csv'
-    combined_df.to_csv(fallback, index=False)
-    print(f"zOverall.csv is locked. Wrote to {fallback} instead.")
+combined_df.to_csv('zOverall.csv', index=False)
+print("Combined DataFrame written to zOverall.csv")
 
 # --- Calculate a single composite z-score per team (zTotal), using weights from config ---
 team_list = df['Team'].unique()

@@ -4,7 +4,7 @@ import pandas as pd
 from scipy.stats import zscore
 import numpy as np
 import yaml
-from unidecode import unidecode as ud
+import unidecode
 
 # ===============================
 # NHL Team Z-Score Calculation Pipeline
@@ -159,7 +159,7 @@ for stat_cfg in ZSCORE_STATS:
     if reverse_sign:
         z = -z
         # Clean and normalize Team names with unidecode
-    penalties_df['Team'] = penalties_df['Team'].apply(lambda s: ud(str(s)).strip() if pd.notnull(s) else s)
+    penalties_df['Team'] = penalties_df['Team'].apply(lambda s: unidecode(str(s)).strip() if pd.notnull(s) else s)
     # Check for non-canonical teams
     unknown_teams = set(penalties_df['Team']) - canonical_teams
     if unknown_teams:
@@ -196,9 +196,11 @@ try:
 except Exception as e:
     print(f"Failed to read FOW% Excel file: {e}")
     sys.exit(1)
-#
+
+from unidecode import unidecode
+
 # Clean and normalize Team names with unidecode
-fow_df['Team'] = fow_df['Team'].apply(lambda s: ud(str(s)).strip() if pd.notnull(s) else s)
+fow_df['Team'] = fow_df['Team'].apply(lambda s: unidecode(str(s)).strip() if pd.notnull(s) else s)
 
 # Reduce to only Team and FOW%
 fow_df = fow_df[['Team', 'FOW%']]
@@ -267,7 +269,7 @@ pp_df = pp_df[pp_pk_cols].reset_index(drop=True)
 pp_df = pp_df[pp_df['Team'] != 'League Average'].reset_index(drop=True)
 
 # Clean and normalize Team names with unidecode for PP/PK
-pp_df['Team'] = pp_df['Team'].apply(lambda s: ud(str(s)).strip() if pd.notnull(s) else s)
+pp_df['Team'] = pp_df['Team'].apply(lambda s: unidecode(str(s)).strip() if pd.notnull(s) else s)
 # Check for non-canonical teams
 unknown_teams = set(pp_df['Team']) - canonical_teams
 if unknown_teams:
@@ -313,13 +315,8 @@ combined_df['zOvlIdx'] = range(1, len(combined_df) + 1)
 print(f"\nUnique team names in combined_df before writing zOverall.csv: {combined_df['team'].unique()}")
 print("\n===== Combined DataFrame (sorted by zscore DESC, with zOvlIdx) =====")
 print(combined_df)
-try:
-    combined_df.to_csv('zOverall.csv', index=False)
-    print("Combined DataFrame written to zOverall.csv")
-except PermissionError:
-    fallback = 'zOverall_out.csv'
-    combined_df.to_csv(fallback, index=False)
-    print(f"zOverall.csv is locked. Wrote to {fallback} instead.")
+combined_df.to_csv('zOverall.csv', index=False)
+print("Combined DataFrame written to zOverall.csv")
 
 # --- Calculate a single composite z-score per team (zTotal), using weights from config ---
 team_list = df['Team'].unique()
