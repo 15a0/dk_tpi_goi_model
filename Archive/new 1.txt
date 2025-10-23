@@ -1,0 +1,3 @@
+https://googlechromelabs.github.io/chrome-for-testing/
+
+https://storage.googleapis.com/chrome-for-testing-public/141.0.7390.122/win64/chromedriver-win64.zip

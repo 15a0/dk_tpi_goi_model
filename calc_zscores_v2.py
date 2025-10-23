@@ -131,11 +131,9 @@ def process_stats_batch(df, stats_config):
             stat_df[zscore_col] = stat_df[zscore_col] * -1
             print(f"    - Reversed sign for '{stat_name}'.")
 
-        # Determine sort order for ranking
-        ascending = stat_cfg.get('sort_order', 'desc') == 'asc'
-        
-        # Calculate rank based on the (potentially reversed) z-score
-        stat_df['rank'] = stat_df[zscore_col].rank(method='min', ascending=not ascending)
+        # Calculate rank based on the (potentially reversed) z-score.
+        # We ALWAYS rank in descending order of z-score, because a higher z-score is always better.
+        stat_df['rank'] = stat_df[zscore_col].rank(method='min', ascending=False)
         
         # Rename columns to the final standardized vertical format
         stat_df.rename(columns={
@@ -326,6 +324,14 @@ def main():
     try:
         z_overall_df = pd.concat(all_final_dfs, ignore_index=True)
 
+        # Sort, add rank, and add date as requested
+        z_overall_df = z_overall_df.sort_values(by='zscore', ascending=False).reset_index(drop=True)
+        z_overall_df['zOverallRank'] = z_overall_df.index + 1
+        z_overall_df['Date'] = datetime.now().strftime('%Y%m%d')
+
+        # Reorder columns
+        z_overall_df = z_overall_df[['zOverallRank', 'Date', 'team', 'stat', 'value', 'zscore', 'rank']]
+
         # Perform sanity checks on the final combined data
         perform_sanity_checks(z_overall_df)
         z_overall_output_path = os.path.join(os.path.dirname(__file__), 'zOverall.csv')
@@ -350,6 +356,13 @@ def main():
         team_totals = z_overall_df.groupby('team')['weighted_zscore'].sum().reset_index()
         team_totals.rename(columns={'weighted_zscore': 'zTotal'}, inplace=True)
         team_totals = team_totals.sort_values(by='zTotal', ascending=False).reset_index(drop=True)
+
+        # Add Rank and Date columns as requested
+        team_totals['Rank'] = team_totals.index + 1
+        team_totals['Date'] = datetime.now().strftime('%Y%m%d')
+
+        # Reorder columns to have Rank first
+        team_totals = team_totals[['Rank', 'team', 'zTotal', 'Date']]
 
         team_totals_output_path = os.path.join(os.path.dirname(__file__), 'team_total_zscores.csv')
         team_totals.to_csv(team_totals_output_path, index=False)

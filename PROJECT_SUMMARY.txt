@@ -1,0 +1,136 @@
+================================================================================
+NHL 2025 DFS Z-SCORE ANALYSIS PROJECT
+================================================================================
+
+PROJECT OVERVIEW
+----------------
+This project calculates standardized z-scores for NHL team statistics to 
+support Daily Fantasy Sports (DFS) decision-making. The system processes 
+multiple statistical categories, normalizes them using z-scores, and produces 
+weighted composite scores to identify teams with the strongest overall 
+performance profiles.
+
+
+APPROACH & METHODOLOGY
+----------------------
+1. Data Input
+   - Source: Excel file containing NHL team statistics
+   - Team names are normalized using a mapping configuration to ensure 
+     consistency across different naming conventions
+
+2. Z-Score Calculation
+   - For each statistical category, calculate the mean and standard deviation
+   - Convert raw values to z-scores: z = (value - mean) / std_dev
+   - Z-scores indicate how many standard deviations a team is from the average
+   - Positive z-scores = above average performance
+   - Negative z-scores = below average performance
+
+3. Directional Adjustment
+   - Some stats are "lower is better" (e.g., Goals Against, Penalty Minutes)
+   - For these stats, z-scores are reversed (multiplied by -1)
+   - This ensures all z-scores align: higher is always better
+
+4. Ranking
+   - Teams are ranked for each stat based on their z-score
+   - Rank 1 = best performance in that category
+
+5. Weighted Composite Score
+   - Each stat category has a configurable weight
+   - Weighted z-total = sum of (z-score × weight) for all categories
+   - This produces a single composite metric for overall team strength
+
+
+STATISTICS USED
+---------------
+The following statistical categories are analyzed:
+
+Offensive Stats:
+- Goals For (GF): Total goals scored by the team
+- Power Play Goals (PPG): Goals scored on power plays
+- Shots For (SF): Total shots on goal by the team
+
+Defensive Stats (reversed):
+- Goals Against (GA): Total goals allowed (lower is better)
+- Penalty Kill Goals Against (PKGA): Goals allowed while shorthanded (lower is better)
+- Shots Against (SA): Total shots allowed (lower is better)
+
+Discipline Stats (reversed):
+- Penalty Minutes (PIM): Total penalty minutes (lower is better)
+
+Note: Each stat's weight and directional preference is configurable in the 
+YAML configuration file.
+
+
+OUTPUT FILES
+------------
+1. zOverall.csv
+   - Contains detailed z-score analysis for all teams and all stats
+   - Columns per stat:
+     * team: Team name
+     * stat: Statistic name
+     * value: Raw statistical value
+     * zscore: Calculated z-score
+     * z[STAT]_Rank: Rank for that specific stat (1 = best)
+   - Organized with all stats for each team grouped together
+   - Allows drill-down analysis of individual stat performance
+
+2. team_total_zscores.csv
+   - Contains the weighted composite z-scores for each team
+   - Columns:
+     * team: Team name
+     * zTotal: Weighted sum of all z-scores
+     * zTotal_Rank: Overall rank (1 = highest composite score)
+   - Sorted by zTotal (descending) for quick identification of top teams
+   - Primary output for DFS lineup construction decisions
+
+
+CONFIGURATION
+-------------
+All processing parameters are defined in config_v2.yaml:
+
+- input_file: Path to the Excel data source
+- team_mappings: Dictionary for normalizing team names
+- stats: List of statistical categories to process
+  * name: Column name in the Excel file
+  * weight: Importance factor for composite score
+  * sort_order: 'desc' for higher-is-better, 'asc' for lower-is-better
+  * reverse_sign: Boolean to flip z-score direction
+
+This configuration-driven approach allows easy modification of:
+- Which stats to include/exclude
+- Relative importance of each stat (weights)
+- Addition of new statistical categories
+
+
+USE CASE
+--------
+The output files support DFS lineup optimization by:
+1. Identifying teams with strong overall profiles (team_total_zscores.csv)
+2. Understanding specific strengths/weaknesses (zOverall.csv)
+3. Targeting players from high-performing teams
+4. Avoiding players from teams with poor statistical profiles
+5. Making data-driven decisions based on normalized, comparable metrics
+
+
+TECHNICAL DETAILS
+-----------------
+- Language: Python
+- Key Libraries: pandas, numpy, PyYAML
+- Data Format: Excel input, CSV output
+- Configuration: YAML-based for flexibility and maintainability
+- Extensibility: New stats can be added via configuration without code changes
+
+
+FUTURE ENHANCEMENTS
+-------------------
+Potential areas for expansion:
+- Player-level statistics (individual performance metrics)
+- Time-series analysis (trending performance)
+- Opponent-adjusted metrics (strength of schedule)
+- Game-specific context (home/away, back-to-back games)
+- Integration with Vegas lines and betting data
+- Automated data refresh from live sources
+
+================================================================================
+Generated: October 2025
+================================================================================
