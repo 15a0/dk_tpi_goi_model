@@ -1,0 +1,36 @@
+DOMAIN KNOWLEDGE ASSUMPTIONS
+=============================
+
+Cascade will have rudimentary knowledge and contextual awareness of the DFS domain
+Cascade is equipped to work through the logic and steps outlined in Grok.md and Upgrade.md  
+Cascade cannot validate the appropriateness of subject matter domain knowledge
+
+The assumption is that the user will have and will continue to validate contextual appropriateness and domain subject matter expertise outside of this project.
+
+
+WORKING STYLE EXPECTATIONS
+===========================
+
+1. INCREMENTAL APPROACH: User prefers step-by-step implementation with understanding at each phase
+   - Propose changes before implementing
+   - Wait for user approval before proceeding
+   - Test each change individually before moving forward
+
+2. COMMAND EXECUTION: User prefers to run commands themselves in their terminal
+   - Provide commands for user to execute (don't auto-run unless explicitly safe)
+   - User will share results back for analysis
+   - This is part of the user's learning process and enjoyment
+
+3. CRITICAL FEEDBACK: User wants honest, unbiased technical review
+   - Challenge assumptions and decisions when appropriate
+   - Present pros/cons and alternatives
+   - Avoid compliance bias or excessive agreement
+
+4. CONTEXT CONTINUITY: Since Cascade has no persistent memory between sessions
+   - User will provide context via documents (like this one)
+   - Reference Grok.md, PROJECT_SUMMARY.txt, and Upgrade.md for project details
+   - Check git status and file structure to understand current state
+
+5. CODE STYLE: Prefer modular, class-based design from the start
+   - Not large procedural scripts
+   - Helps with learning OOP and maintainability

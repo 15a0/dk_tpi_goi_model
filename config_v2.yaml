@@ -17,30 +17,37 @@ providers:
             sort_order: desc
             reverse_sign: false
             weight: 1
+            bucket: pace_drivers
           - name: xGF
             sort_order: desc
             reverse_sign: false
             weight: 1
+            bucket: offensive_creation
           - name: xGA
             sort_order: asc
             reverse_sign: true
             weight: 1
+            bucket: defensive_resistance
           - name: SCF%
             sort_order: desc
             reverse_sign: false
             weight: 0.5
+            bucket: offensive_creation
           - name: HDF%
             sort_order: desc
             reverse_sign: false
             weight: 0.5
+            bucket: offensive_creation
           - name: HDC%
             sort_order: desc
             reverse_sign: false
             weight: 0.3
+            bucket: offensive_creation
           - name: HDCO%
             sort_order: desc
             reverse_sign: false
             weight: 0.3
+            bucket: offensive_creation
       - type: "pp_pk"
         url: "https://www.hockey-reference.com/leagues/NHL_2026.html"
         filename_template: "nhl_pp_pk.xlsx"
@@ -52,10 +59,12 @@ providers:
             sort_order: desc
             reverse_sign: false
             weight: 0.5
+            bucket: offensive_creation
           - name: PK%
             sort_order: desc
             reverse_sign: false
             weight: 0.5
+            bucket: defensive_resistance
   - name: "nhl.com"
     files:
       - type: "penalties"
@@ -67,14 +76,17 @@ providers:
             sort_order: desc
             reverse_sign: false
             weight: 0.5
+            bucket: pace_drivers
           - name: Pen Taken/60
             sort_order: asc
             reverse_sign: true
             weight: 0.5
+            bucket: defensive_resistance
           - name: Net Pen/60
             sort_order: desc
             reverse_sign: false
             weight: 0.5
+            bucket: pace_drivers
       - type: "fow"
         url: "https://www.nhl.com/stats/teams?report=faceoffpercentages&reportType=game&dateFrom=2025-10-07&dateTo=2025-10-18&gameType=2&sort=faceoffWinPct&page=0&pageSize=50"
         filename_template: "nhl_fow.xlsx"
@@ -84,6 +96,7 @@ providers:
             sort_order: desc
             reverse_sign: false
             weight: 0.3
+            bucket: pace_drivers
 
 team_name_mappings:
   - pattern: "Montr*l Canadiens"
