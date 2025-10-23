@@ -154,6 +154,92 @@ def process_stats_batch(df, stats_config):
     print(f"  -> Batch processing complete. Generated {len(all_stat_dfs)} stat DataFrames.")
     return all_stat_dfs
 
+def calculate_bucket_zscores(z_overall_df, config):
+    """
+    Calculates weighted average z-scores per bucket per team.
+    
+    Args:
+        z_overall_df (pd.DataFrame): The combined DataFrame with all individual stat z-scores.
+        config (dict): The configuration dictionary containing bucket_weights.
+    
+    Returns:
+        pd.DataFrame: A DataFrame with bucket-level z-scores and ranks.
+    """
+    print("\n--- Calculating Bucket-Level Z-Scores ---")
+    
+    bucket_weights = config.get('bucket_weights', {
+        'offensive_creation': 0.4,
+        'defensive_resistance': 0.3,
+        'pace_drivers': 0.3
+    })
+    
+    # Build a stat-to-bucket mapping from config
+    stat_to_bucket = {}
+    for provider in config.get('providers', []):
+        for file_info in provider.get('files', []):
+            for stat in file_info.get('stats', []):
+                stat_name = stat['name']
+                bucket = stat.get('bucket', 'unknown')
+                stat_to_bucket[stat_name] = bucket
+    
+    # Add bucket column to z_overall_df
+    z_overall_df['bucket'] = z_overall_df['stat'].map(stat_to_bucket)
+    
+    bucket_dfs = []
+    
+    for bucket_name in ['offensive_creation', 'defensive_resistance', 'pace_drivers']:
+        # Filter to this bucket's stats
+        bucket_data = z_overall_df[z_overall_df['bucket'] == bucket_name].copy()
+        
+        if len(bucket_data) == 0:
+            print(f"  -> WARNING: No stats found for bucket '{bucket_name}'. Skipping.")
+            continue
+        
+        # Calculate weighted average z-score per team
+        # Get weights for stats in this bucket
+        bucket_stats = bucket_data['stat'].unique()
+        stat_weights = {}
+        for provider in config.get('providers', []):
+            for file_info in provider.get('files', []):
+                for stat in file_info.get('stats', []):
+                    if stat['name'] in bucket_stats:
+                        stat_weights[stat['name']] = stat.get('weight', 1.0)
+        
+        # Add weight column
+        bucket_data['stat_weight'] = bucket_data['stat'].map(stat_weights)
+        
+        # Calculate weighted z-score
+        bucket_data['weighted_zscore'] = bucket_data['zscore'] * bucket_data['stat_weight']
+        
+        # Group by team and calculate weighted average
+        bucket_avg = bucket_data.groupby('team').agg({
+            'weighted_zscore': 'sum',
+            'stat_weight': 'sum'
+        }).reset_index()
+        
+        # Normalize by total weight
+        bucket_avg['zscore'] = bucket_avg['weighted_zscore'] / bucket_avg['stat_weight']
+        
+        # Calculate rank within bucket
+        bucket_avg['rank'] = bucket_avg['zscore'].rank(method='min', ascending=False)
+        
+        # Create output row
+        bucket_avg['stat'] = f"{bucket_name}_avg"
+        bucket_avg['value'] = bucket_avg['zscore']  # For consistency
+        bucket_avg['bucket'] = bucket_name
+        
+        # Select and reorder columns to match z_overall_df format
+        bucket_avg = bucket_avg[['team', 'stat', 'value', 'zscore', 'rank', 'bucket']]
+        
+        print(f"  -> Calculated {bucket_name}: {len(bucket_avg)} teams.")
+        bucket_dfs.append(bucket_avg)
+    
+    # Combine all bucket DataFrames
+    bucket_combined = pd.concat(bucket_dfs, ignore_index=True)
+    print(f"  -> Bucket calculation complete. Generated {len(bucket_combined)} bucket rows.")
+    
+    return bucket_combined
+
 def process_hockey_reference_file(file_info, file_path, canonical_teams, team_name_mappings):
     """
     Loads and standardizes a file from hockey-reference.com.
@@ -324,6 +410,14 @@ def main():
     try:
         z_overall_df = pd.concat(all_final_dfs, ignore_index=True)
 
+        # Calculate bucket-level z-scores
+        bucket_df = calculate_bucket_zscores(z_overall_df, config)
+        
+        # Append bucket rows to z_overall_df
+        # Ensure columns match before concatenating
+        bucket_df_aligned = bucket_df[['team', 'stat', 'value', 'zscore', 'rank']].copy()
+        z_overall_df = pd.concat([z_overall_df, bucket_df_aligned], ignore_index=True)
+
         # Sort, add rank, and add date as requested
         z_overall_df = z_overall_df.sort_values(by='zscore', ascending=False).reset_index(drop=True)
         z_overall_df['zOverallRank'] = z_overall_df.index + 1
@@ -341,23 +435,37 @@ def main():
         print(f"\nERROR: Failed to create zOverall.csv: {e}")
         return # Stop processing if we can't create the main file
 
-    # 2. Create the team_total_zscores.csv file
+    # 2. Create the team_total_zscores.csv file (TPI - Team DFS Power Index)
     try:
-        stat_weight_map = {}
-        for provider in config.get('providers', []):
-            for file_info in provider.get('files', []):
-                for stat in file_info.get('stats', []):
-                    stat_weight_map[stat['name']] = stat.get('weight', 1.0)
-
-        z_overall_df['weighted_zscore'] = z_overall_df.apply(
-            lambda row: row['zscore'] * stat_weight_map.get(row['stat'], 1.0), axis=1
-        )
-
-        team_totals = z_overall_df.groupby('team')['weighted_zscore'].sum().reset_index()
+        # Use ONLY bucket averages for TPI calculation
+        bucket_rows = z_overall_df[z_overall_df['stat'].str.contains('_avg', na=False)].copy()
+        
+        # Get bucket weights from config
+        bucket_weights = config.get('bucket_weights', {
+            'offensive_creation': 0.4,
+            'defensive_resistance': 0.3,
+            'pace_drivers': 0.3
+        })
+        
+        # Map stat names to bucket names and apply weights
+        def get_bucket_weight(stat_name):
+            if 'offensive_creation' in stat_name:
+                return bucket_weights.get('offensive_creation', 0.4)
+            elif 'defensive_resistance' in stat_name:
+                return bucket_weights.get('defensive_resistance', 0.3)
+            elif 'pace_drivers' in stat_name:
+                return bucket_weights.get('pace_drivers', 0.3)
+            return 1.0
+        
+        bucket_rows['bucket_weight'] = bucket_rows['stat'].apply(get_bucket_weight)
+        bucket_rows['weighted_zscore'] = bucket_rows['zscore'] * bucket_rows['bucket_weight']
+        
+        # Calculate TPI as weighted sum of bucket averages
+        team_totals = bucket_rows.groupby('team')['weighted_zscore'].sum().reset_index()
         team_totals.rename(columns={'weighted_zscore': 'zTotal'}, inplace=True)
         team_totals = team_totals.sort_values(by='zTotal', ascending=False).reset_index(drop=True)
 
-        # Add Rank and Date columns as requested
+        # Add Rank and Date columns
         team_totals['Rank'] = team_totals.index + 1
         team_totals['Date'] = datetime.now().strftime('%Y%m%d')
 
@@ -366,7 +474,7 @@ def main():
 
         team_totals_output_path = os.path.join(os.path.dirname(__file__), 'team_total_zscores.csv')
         team_totals.to_csv(team_totals_output_path, index=False)
-        print(f"Successfully created '{os.path.basename(team_totals_output_path)}' with {len(team_totals)} teams.")
+        print(f"Successfully created '{os.path.basename(team_totals_output_path)}' with {len(team_totals)} teams (TPI = Team DFS Power Index).")
     except Exception as e:
         print(f"\nERROR: Failed to create team_total_zscores.csv: {e}")
 

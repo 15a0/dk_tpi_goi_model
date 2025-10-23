@@ -98,6 +98,11 @@ providers:
             weight: 0.3
             bucket: pace_drivers
 
+bucket_weights:
+  offensive_creation: 0.4
+  defensive_resistance: 0.3
+  pace_drivers: 0.3
+
 team_name_mappings:
   - pattern: "Montr*l Canadiens"
     replacement: "Montreal Canadiens"
