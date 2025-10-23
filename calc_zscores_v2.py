@@ -154,6 +154,72 @@ def process_stats_batch(df, stats_config):
     print(f"  -> Batch processing complete. Generated {len(all_stat_dfs)} stat DataFrames.")
     return all_stat_dfs
 
+def create_tpi_rankings(z_overall_df, config):
+    """
+    Creates a TPI (Team DFS Power Index) rankings file with bucket breakdowns.
+    
+    Args:
+        z_overall_df (pd.DataFrame): The combined DataFrame with all stats and bucket averages.
+        config (dict): The configuration dictionary containing bucket_weights.
+    
+    Returns:
+        pd.DataFrame: A DataFrame with TPI rankings and bucket scores.
+    """
+    print("\n--- Creating TPI Rankings ---")
+    
+    # Extract only bucket average rows
+    bucket_rows = z_overall_df[z_overall_df['stat'].str.contains('_avg', na=False)].copy()
+    
+    # Pivot to get one row per team with columns for each bucket
+    tpi_df = bucket_rows.pivot_table(
+        index='team',
+        columns='stat',
+        values='zscore',
+        aggfunc='first'
+    ).reset_index()
+    
+    # Rename columns for clarity
+    tpi_df.rename(columns={
+        'offensive_creation_avg': 'offensive_creation',
+        'defensive_resistance_avg': 'defensive_resistance',
+        'pace_drivers_avg': 'pace_drivers'
+    }, inplace=True)
+    
+    # Get bucket weights from config
+    bucket_weights = config.get('bucket_weights', {
+        'offensive_creation': 0.4,
+        'defensive_resistance': 0.3,
+        'pace_drivers': 0.3
+    })
+    
+    # Calculate TPI as weighted sum of bucket averages
+    tpi_df['TPI'] = (
+        tpi_df['offensive_creation'] * bucket_weights.get('offensive_creation', 0.4) +
+        tpi_df['defensive_resistance'] * bucket_weights.get('defensive_resistance', 0.3) +
+        tpi_df['pace_drivers'] * bucket_weights.get('pace_drivers', 0.3)
+    )
+    
+    # Sort by TPI descending and add rank
+    tpi_df = tpi_df.sort_values(by='TPI', ascending=False).reset_index(drop=True)
+    tpi_df['Rank'] = tpi_df.index + 1
+    
+    # Add date
+    tpi_df['Date'] = datetime.now().strftime('%Y%m%d')
+    
+    # Reorder columns for readability
+    tpi_df = tpi_df[[
+        'Rank', 'team', 'TPI',
+        'offensive_creation', 'defensive_resistance', 'pace_drivers',
+        'Date'
+    ]]
+    
+    # Round z-scores to 4 decimal places for readability
+    for col in ['TPI', 'offensive_creation', 'defensive_resistance', 'pace_drivers']:
+        tpi_df[col] = tpi_df[col].round(4)
+    
+    print(f"  -> TPI Rankings created for {len(tpi_df)} teams.")
+    return tpi_df
+
 def calculate_bucket_zscores(z_overall_df, config):
     """
     Calculates weighted average z-scores per bucket per team.
@@ -477,6 +543,15 @@ def main():
         print(f"Successfully created '{os.path.basename(team_totals_output_path)}' with {len(team_totals)} teams (TPI = Team DFS Power Index).")
     except Exception as e:
         print(f"\nERROR: Failed to create team_total_zscores.csv: {e}")
+
+    # 3. Create the tpi_rankings.csv file (detailed TPI with bucket breakdowns)
+    try:
+        tpi_rankings = create_tpi_rankings(z_overall_df, config)
+        tpi_rankings_output_path = os.path.join(os.path.dirname(__file__), 'tpi_rankings.csv')
+        tpi_rankings.to_csv(tpi_rankings_output_path, index=False)
+        print(f"Successfully created '{os.path.basename(tpi_rankings_output_path)}' with {len(tpi_rankings)} teams.")
+    except Exception as e:
+        print(f"\nERROR: Failed to create tpi_rankings.csv: {e}")
 
 if __name__ == "__main__":
     main()
