@@ -1,7 +1,7 @@
 import os
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 def clear_screen():
     """Clear terminal screen"""
@@ -82,18 +82,23 @@ def step_3_analyze_slate():
     print()
     
     # Step 1: Choose date
+    today = date.today()
+    tomorrow = today + timedelta(days=1)
+    today_str = today.strftime('%Y-%m-%d')
+    tomorrow_str = tomorrow.strftime('%Y-%m-%d')
+    
     print("Which date?")
-    print("  1. Today (2025-10-23)")
-    print("  2. Tomorrow (2025-10-24)")
+    print(f"  1. Today ({today_str})")
+    print(f"  2. Tomorrow ({tomorrow_str})")
     print("  3. Back to main menu")
     print()
     
     date_choice = input("Select (1-3): ").strip()
     
     if date_choice == '1':
-        target_date = "2025-10-23"
+        target_date = today_str
     elif date_choice == '2':
-        target_date = "2025-10-24"
+        target_date = tomorrow_str
     elif date_choice == '3':
         return False
     else:
